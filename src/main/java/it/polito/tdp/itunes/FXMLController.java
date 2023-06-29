@@ -5,9 +5,13 @@
 package it.polito.tdp.itunes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
+import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.Model;
+import it.polito.tdp.itunes.model.Track;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,7 +36,7 @@ public class FXMLController {
     private Button btnPlaylist; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGenere"
-    private ComboBox<?> cmbGenere; // Value injected by FXMLLoader
+    private ComboBox<Genre> cmbGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtDTOT"
     private TextField txtDTOT; // Value injected by FXMLLoader
@@ -54,6 +58,38 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
 
+    	txtResult.clear();
+    	Genre genere = this.cmbGenere.getValue();
+    	
+    	if (genere == null ) {
+    		txtResult.setText("Inserire un valore");
+    	}
+    	
+    	String inputMin = txtMin.getText();
+    	String inputMax = txtMax.getText();
+    	
+    	if (inputMin.compareTo("")==0 || inputMax.compareTo("")==0) {
+    		txtResult.appendText("Inserire dei valori");
+    	}
+    	
+    	int min = 0;
+    	int max = 0;
+    	try {
+    		min = Integer.parseInt(inputMin);
+    		max = Integer.parseInt(inputMax);
+    	}catch (NumberFormatException e) {
+    		txtResult.appendText("Valori non accettabili");
+    		return ;
+    	}
+    	
+    	this.model.creaGrafo(genere, min, max);
+    	txtResult.appendText("Grafo creato!\n#vertici: " + this.model.getVertici().size() + "\n#Archi: " + this.model.numArchi() +"\n");
+    	List<Set<Track>> connessa = this.model.getComponenteConnessa();
+    	for (int i = 0; i < connessa.size(); i++ ) {
+    		
+    		txtResult.appendText("\nComponente con "+ connessa.get(i).size()+" vertici, inseriti in " + this.model.getPlylistDistinta(connessa.get(i))+ " playlist\n");
+
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -70,6 +106,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.cmbGenere.getItems().addAll(this.model.getGenre());
     }
 
 }

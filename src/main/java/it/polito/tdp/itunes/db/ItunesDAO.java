@@ -76,7 +76,7 @@ public class ItunesDAO {
 		return result;
 	}
 	
-	public List<Track> getAllTracks(){
+	/*public List<Track> getAllTracks(){
 		final String sql = "SELECT * FROM Track";
 		List<Track> result = new ArrayList<Track>();
 		
@@ -97,7 +97,7 @@ public class ItunesDAO {
 			throw new RuntimeException("SQL Error");
 		}
 		return result;
-	}
+	}*/
 	
 	public List<Genre> getAllGenres(){
 		final String sql = "SELECT * FROM Genre";
@@ -139,6 +139,39 @@ public class ItunesDAO {
 		return result;
 	}
 
+	
+	//vertici
+	public List<Track> getVertici(Genre genere, int min, int max) {
+		
+		String sql ="SELECT t.TrackId, t.Name, t.Composer, t.Milliseconds, t.Bytes, t.UnitPrice, COUNT(*) numPlaylist "
+				+ "FROM track t, playlisttrack p "
+				+ "WHERE t.GenreId = ? AND t.Milliseconds/1000/60> ? AND t.Milliseconds/1000/60 < ? AND t.TrackId = p.TrackId "
+				+ "GROUP BY t.TrackId, t.Name, t.Composer, t.Milliseconds, t.Bytes, t.UnitPrice ";
+		
+		List<Track> result = new ArrayList<>();
+		
+		Connection conn = DBConnect.getConnection();
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, genere.getGenreId());
+			st.setInt(2, min);
+			st.setInt(3, max);
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+				result.add(new Track(res.getInt("TrackId"), res.getString("Name"),  res.getString("Composer"), res.getInt("Milliseconds"), res.getInt("Bytes"), res.getDouble("UnitPrice"), res.getInt("numPlaylist")));
+				
+			}
+			
+			conn.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		return result;
+	}
 	
 	
 }

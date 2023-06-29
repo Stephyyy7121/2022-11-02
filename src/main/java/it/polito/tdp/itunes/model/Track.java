@@ -7,8 +7,17 @@ public class Track {
 	private int milliseconds;
 	private int bytes;
 	private double unitPrice;
+	private int numPlaylist;
 	
-	public Track(Integer trackId, String name, String composer, int milliseconds, int bytes, double unitPrice) {
+	public int getNumPlaylist() {
+		return numPlaylist;
+	}
+
+	public void setNumPlaylist(int numPlaylist) {
+		this.numPlaylist = numPlaylist;
+	}
+
+	public Track(Integer trackId, String name, String composer, int milliseconds, int bytes, double unitPrice, int numPlaylist) {
 		super();
 		this.trackId = trackId;
 		this.name = name;
@@ -16,6 +25,7 @@ public class Track {
 		this.milliseconds = milliseconds;
 		this.bytes = bytes;
 		this.unitPrice = unitPrice;
+		this.numPlaylist = numPlaylist;
 	}
 	
 	public Integer getTrackId() {
